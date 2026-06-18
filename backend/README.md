@@ -58,3 +58,45 @@ Run `npm run build` to build the project. The output can be found in the `/dist`
 Run `npm run start` to host a local development server on port 3000. This will run what ever is in the `/dist` directory when it is run. You will need to re-run the `build` and `start` commands to see changes. Alternatively you can add a `watch` command to handle this for you.
 
 Run `npm run test` to run the automated tests. These can be found in the `/test` directory. 
+
+## New Endpoint
+
+### Get User By Id
+Returns the details of a specific user based on the provided user ID.
+
+### Endpoint
+```
+GET /user/<user_id>
+```
+### Example Request
+
+```
+Example:
+GET /user/8a21a9f0-c692-4710-9faa-ee08ca4fc03c
+
+Response:
+{
+    "id": "8a21a9f0-c692-4710-9faa-ee08ca4fc03c",
+    "first_name": "Sample",
+    "last_name": "Name",
+    "email": "sample@name.com",
+    "favourites": [
+        "Pear"
+    ]
+}
+```
+
+### Error Handling
+If the specified user does not exist, the API returns: 404 Not Found
+
+```
+{"error":"User with id 15a21a9f0-c692-4710-9faa-ee08ca4fc03a  not found"}
+```
+
+### Tests
+The test suite includes coverage for:
+- `GET /user/:userId`
+    - Returns a user when a valid ID is provided
+    - Returns 404 when user does not exist
+    - Returns 404 when user id is empty string
+
