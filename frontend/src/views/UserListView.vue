@@ -1,19 +1,30 @@
 <script setup lang="ts">
 
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import axios, { type AxiosResponse } from 'axios';
-import type { User } from '@/models';
+import type { User, UsersResponse } from '@/models';
+
+const pageSize = 10;
 
 const users = ref<User[]>();
+let currentPage = ref<number>(0);
+let totalPages = ref<number>(0);
 
 onMounted(async () => {
-  try {
-    const response: AxiosResponse = await axios.get('http://localhost:3000/users');
-    users.value = response.data;
-  } catch (e) {
-    users.value = [];
-  }
+  await fetchPage(currentPage.value);
 });
+
+watch(currentPage, async () => {
+  await fetchPage(currentPage.value);
+});
+
+const fetchPage = async (pageNum: number) => {
+  const request: AxiosResponse = await axios.get(`http://localhost:3000/users?page=${pageNum}&limit=${pageSize}`);
+  const data: UsersResponse = request.data;
+  users.value = data.users;
+  totalPages.value = data.pageInfo.totalPages;
+  currentPage.value = data.pageInfo.currentPage;
+};
 
 </script>
 
@@ -29,7 +40,7 @@ onMounted(async () => {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="user in users" :key="user.id">
+        <tr v-for="user in users">
           <td>{{ user.id }}</td>
           <td>{{ user.last_name }}</td>
           <td>{{ user.first_name }}</td>
@@ -41,6 +52,11 @@ onMounted(async () => {
         </tr>
       </tbody>
     </table>
+    <div class="buttons">
+      <button @click="currentPage--" :disabled="currentPage === 0">Prev Page</button>
+      <span>Page {{ currentPage }}</span>
+      <button @click="currentPage++" :disabled="currentPage === totalPages">Next Page</button>
+    </div>
   </main>
 </template>
 
@@ -52,6 +68,14 @@ onMounted(async () => {
 
   tbody tr:nth-child(odd) {
     background-color: var(--color-border);
+  }
+
+  .buttons {
+    text-align: center;
+  }
+
+  .buttons > * {
+    margin: 0.5rem;
   }
 </style>
   
