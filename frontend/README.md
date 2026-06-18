@@ -51,3 +51,20 @@ From this directory, run `npm install` to install all dependencies.
 Run `npm run build` to run type-checking and build the project.
 
 Run `npm run dev` to host a local development server on port 5173. This will watch for any changes are rebuild for you.
+
+## Implementation Notes
+
+### Configuration
+The backend API base URL is configured via environment variable for flexibility across environments.
+
+To configure locally:
+```bash
+cp .env.example .env
+```
+Change the API URL in the `.env file`  `VITE_API_BASE_URL=http://localhost:3000`
+
+## UserDetailView Implementation
+
+- Fetches user data from GET `<API_BASE_URL>/user/<user_id>`
+- Displays all required fields: Id, Last Name, First Name, Email, Favourites
+- Missing or empty fields render as -
